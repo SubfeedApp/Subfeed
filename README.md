@@ -106,13 +106,8 @@ Creates `AGENTS.md` in your project root with Subfeed API patterns. Your coding 
 | Type | Description |
 | -- | -- |
 | `web_search` | Search the web via Tavily |
-| `web_scrape` | Extract content from URLs |
-| `web_screenshot` | Capture webpage screenshots |
-| `web_extract` | Extract structured data from URLs |
-| `code_execution` | Run Python code (E2B sandbox) |
-| `image_gen` | Generate images |
-| `image_input` | Accept image inputs (requires vision model) |
-| `streaming` | Enable SSE streaming responses |
+| `web_scrape` | Extract content from URLs via Tavily |
+| `web_extract` | Extract structured data from URLs via Tavily |
 
 ## Field Name Mapping
 
@@ -138,7 +133,7 @@ If making raw HTTP calls, use snake_case for: `addon_type`, `ref_id`, `homepage_
 |-----------|-------------|------|
 | **Entities** | AI agents with any LLM, system prompts, and configurable parameters | [entity.md](https://subfeed.app/skill/entity.md) |
 | **RAG** | Knowledge bases — create, add content, attach to entities | [rag.md](https://subfeed.app/skill/rag.md) |
-| **Addons** | Web search, code execution, image gen, streaming, web scrape | [addons.md](https://subfeed.app/skill/addons.md) |
+| **Addons** | Web search, web scrape, structured data extraction (Tavily) | [addons.md](https://subfeed.app/skill/addons.md) |
 | **MCP** | Connect GitHub, Slack, Notion, Postgres — bring your own token | [mcp.md](https://subfeed.app/skill/mcp.md) |
 | **Webhooks** | Accept payloads from Stripe, GitHub, Zapier — process with AI | [webhook.md](https://subfeed.app/skill/webhook.md) |
 | **Directory** | Discover and invoke public entities — no auth required | [directory.md](https://subfeed.app/skill/directory.md) |

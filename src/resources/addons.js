@@ -6,13 +6,8 @@
  *
  * Available addon types:
  * - web_search: Search the web via Tavily
- * - web_scrape: Extract content from URLs
- * - web_screenshot: Capture webpage screenshots
- * - web_extract: Extract structured data from URLs
- * - code_execution: Run Python code via E2B sandbox (AVC)
- * - image_gen: Generate images
- * - image_input: Accept image inputs (requires vision model)
- * - streaming: Enable SSE streaming responses
+ * - web_scrape: Extract content from URLs via Tavily
+ * - web_extract: Extract structured data from URLs via Tavily
  *
  * Docs: https://subfeed.app/skill/addons.md
  */
@@ -24,13 +19,12 @@ class Addons {
    * SDK handles field mapping — you pass camelCase, SDK sends snake_case.
    *
    * @param {string} entityId - Entity UUID
-   * @param {string} addonType - One of: web_search, web_scrape, web_screenshot,
-   *   web_extract, code_execution, image_gen, image_input, streaming
+   * @param {string} addonType - One of: web_search, web_scrape, web_extract
    * @returns {Promise<{ addon_type: string, enabled: boolean }>}
    *
    * @example
    * await subfeed.addons.enable(entity.id, 'web_search');
-   * await subfeed.addons.enable(entity.id, 'code_execution');
+   * await subfeed.addons.enable(entity.id, 'web_extract');
    */
   async enable(entityId, addonType) {
     return this.client.post(`/entity/${entityId}/addons`, { addon_type: addonType });

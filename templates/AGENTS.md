@@ -57,7 +57,7 @@ POST /v1/entity/{entityId}/attachments
 POST /v1/entity/{entityId}/addons
 { "addon_type": "web_search" }
 ```
-Available: web_search, web_scrape, web_screenshot, web_extract, code_execution, image_gen, image_input, streaming
+Available: web_search, web_scrape, web_extract
 
 ### Connect MCP tools
 ```
