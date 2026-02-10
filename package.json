@@ -1,0 +1,36 @@
+{
+  "name": "@subfeed/sdk",
+  "version": "0.1.0",
+  "description": "Subfeed SDK — create AI entities, attach RAG, connect MCP tools, deploy webhooks",
+  "main": "src/index.js",
+  "bin": {
+    "subfeed": "./bin/subfeed.js"
+  },
+  "keywords": [
+    "subfeed",
+    "ai",
+    "agents",
+    "llm",
+    "rag",
+    "mcp",
+    "model-context-protocol",
+    "agentic",
+    "ai-infrastructure"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/subfeed/sdk"
+  },
+  "homepage": "https://subfeed.app",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "src/",
+    "bin/",
+    "templates/",
+    "README.md",
+    "AGENTS.md"
+  ]
+}
