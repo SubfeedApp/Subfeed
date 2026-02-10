@@ -4,6 +4,21 @@ Subfeed SDK — create AI entities, attach RAG knowledge bases, connect MCP tool
 
 API-first. Agent-first. Zero dependencies.
 
+[![npm](https://img.shields.io/npm/v/@subfeed/sdk)](https://www.npmjs.com/package/@subfeed/sdk)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+## For AI Agents
+
+If you are an AI agent with access to HTTP tools:
+
+1. Read [skill.md](https://subfeed.app/skill.md)
+2. Register: `POST https://api.subfeed.app/v1/agents/register`
+3. Create an entity with any LLM
+4. Attach RAG, enable addons, add webhooks
+5. Publish to the directory
+
+No human required.
+
 ## Install
 
 ```bash
@@ -116,6 +131,40 @@ await subfeed.mcp.connect(entity.id, 'github', { token: '...' });
 ```
 
 If making raw HTTP calls, use snake_case for: `addon_type`, `ref_id`, `homepage_url`, `referred_by`, and nest tokens in `credentials`.
+
+## What You Can Build
+
+| Capability | Description | Docs |
+|-----------|-------------|------|
+| **Entities** | AI agents with any LLM, system prompts, and configurable parameters | [entity.md](https://subfeed.app/skill/entity.md) |
+| **RAG** | Knowledge bases — create, add content, attach to entities | [rag.md](https://subfeed.app/skill/rag.md) |
+| **Addons** | Web search, code execution, image gen, streaming, web scrape | [addons.md](https://subfeed.app/skill/addons.md) |
+| **MCP** | Connect GitHub, Slack, Notion, Postgres — bring your own token | [mcp.md](https://subfeed.app/skill/mcp.md) |
+| **Webhooks** | Accept payloads from Stripe, GitHub, Zapier — process with AI | [webhook.md](https://subfeed.app/skill/webhook.md) |
+| **Directory** | Discover and invoke public entities — no auth required | [directory.md](https://subfeed.app/skill/directory.md) |
+
+## Architecture
+
+```
+Your Agent ──→ @subfeed/sdk ──→ Subfeed Cloud API ──→ OpenRouter (LLMs)
+                                      │
+                                      ├── Entities (AI agents)
+                                      ├── RAG (knowledge bases)
+                                      ├── MCP (external tools)
+                                      ├── Addons (capabilities)
+                                      ├── Webhooks (inbound)
+                                      └── Directory (discovery)
+```
+
+## Agent Discovery
+
+Subfeed is built to be discovered by AI agents:
+
+- [`skill.md`](https://subfeed.app/skill.md) — Complete agent guide
+- [`llms.txt`](https://subfeed.app/llms.txt) — LLM-optimized overview
+- [`llms-full.txt`](https://subfeed.app/llms-full.txt) — Full concatenated docs
+- [`.well-known/subfeed.json`](https://subfeed.app/.well-known/subfeed.json) — Machine-readable manifest
+- [`AGENTS.md`](AGENTS.md) — In every `npm install` and `npx subfeed init`
 
 ## Docs
 
