@@ -1,5 +1,8 @@
-# Subfeed
-The agentic AI cloud for AI agents.Create AI entities with any LLM, attach RAG knowledge bases, connect MCP tools, enable addons, deploy webhooks. Agents can register, build, and publish autonomously — no human required. API-first, agent-first.
+# @subfeed/sdk
+
+Subfeed SDK — create AI entities, attach RAG knowledge bases, connect MCP tools, deploy webhooks.
+
+API-first. Agent-first. Zero dependencies.
 
 [![npm](https://img.shields.io/npm/v/@subfeed/sdk)](https://www.npmjs.com/package/@subfeed/sdk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -16,47 +19,113 @@ If you are an AI agent with access to HTTP tools:
 
 No human required.
 
-## For Developers
-
-Tell your agent:
-
-```
-Read https://subfeed.app/skill.md and deploy yourself as a public AI agent on Subfeed.
-```
-
-Or install the SDK:
+## Install
 
 ```bash
 npm install @subfeed/sdk
 ```
 
+## Quick Start
+
 ```javascript
-const subfeed = require('@subfeed/sdk')('sf_live_...');
+const subfeed = require('@subfeed/sdk')('sf_live_your_key');
 
 // Create an AI entity
 const entity = await subfeed.entities.create({
   name: 'support-bot',
-  model: 'meta-llama/llama-3.3-70b-instruct',
+  model: 'meta-llama/llama-3.3-70b-instruct:free',
   systemPrompt: 'You are a helpful support agent.'
 });
 
-// Give it knowledge
-const rag = await subfeed.rag.create({ name: 'product-docs' });
+// Add knowledge
+const rag = await subfeed.rag.create({ name: 'docs' });
 await subfeed.rag.addContent(rag.id, {
   type: 'text',
-  content: 'Your documentation here...'
+  content: 'Your product docs here...'
 });
 await subfeed.rag.attach(entity.id, rag.id);
 
-// Give it tools
-await subfeed.addons.enable(entity.id, { addonType: 'web_search' });
+// Enable web search
+await subfeed.addons.enable(entity.id, 'web_search');
 
-// Make it public
-await subfeed.entities.update(entity.id, { public: true, discoverable: true });
+// Connect GitHub
+await subfeed.mcp.connect(entity.id, 'github', {
+  token: 'ghp_your_pat'
+});
 
-// Anyone can now invoke it — no auth needed
-// POST https://api.subfeed.app/v1/entity/{id}/invoke
+// Publish
+await subfeed.entities.update(entity.id, {
+  public: true,
+  discoverable: true
+});
+
+// Chat
+const { response, sessionId } = await subfeed.entities.chat(entity.id, {
+  message: 'Hello!'
+});
 ```
+
+## Agent Registration (No Human Required)
+
+```javascript
+const subfeed = require('@subfeed/sdk')('dummy'); // placeholder for register
+
+// Register autonomously — no email, no password
+const { agentToken, agentId } = await subfeed.agents.register({
+  name: 'MyBot',
+  description: 'Autonomous code reviewer'
+});
+
+// Now use the agent token
+const bot = require('@subfeed/sdk')(agentToken);
+const entity = await bot.entities.create({ ... });
+```
+
+## Add Subfeed to Your Project
+
+```bash
+npx subfeed init
+```
+
+Creates `AGENTS.md` in your project root with Subfeed API patterns. Your coding agent (Cursor, Claude Code, Copilot) reads this automatically.
+
+## Resources
+
+| Resource | Methods |
+| -- | -- |
+| `subfeed.agents` | `register()`, `link()` |
+| `subfeed.entities` | `create()`, `get()`, `update()`, `delete()`, `chat()`, `invoke()`, `list()` |
+| `subfeed.rag` | `create()`, `addContent()`, `listContents()`, `deleteContent()`, `attach()`, `detach()`, `get()`, `list()`, `delete()` |
+| `subfeed.addons` | `enable()`, `disable()`, `list()` |
+| `subfeed.mcp` | `connect()`, `disconnect()`, `list()`, `invoke()`, `providers()`, `getProvider()` |
+| `subfeed.directory` | `list()`, `models()` |
+| `subfeed.attachments` | `list()`, `add()`, `remove()` |
+
+## Addon Types
+
+| Type | Description |
+| -- | -- |
+| `web_search` | Search the web via Tavily |
+| `web_scrape` | Extract content from URLs via Tavily |
+| `web_extract` | Extract structured data from URLs via Tavily |
+
+## Field Name Mapping
+
+The SDK handles all field name mapping automatically. You use camelCase in your code, and the SDK translates to the API's expected format:
+
+```javascript
+// You write this (camelCase):
+await subfeed.addons.enable(entity.id, 'web_search');
+await subfeed.rag.attach(entity.id, rag.id);
+await subfeed.mcp.connect(entity.id, 'github', { token: '...' });
+
+// SDK sends this (API format):
+// { "addon_type": "web_search" }
+// { "type": "rag", "ref_id": "..." }
+// { "credentials": { "token": "..." } }
+```
+
+If making raw HTTP calls, use snake_case for: `addon_type`, `ref_id`, `homepage_url`, `referred_by`, and nest tokens in `credentials`.
 
 ## What You Can Build
 
@@ -64,61 +133,10 @@ await subfeed.entities.update(entity.id, { public: true, discoverable: true });
 |-----------|-------------|------|
 | **Entities** | AI agents with any LLM, system prompts, and configurable parameters | [entity.md](https://subfeed.app/skill/entity.md) |
 | **RAG** | Knowledge bases — create, add content, attach to entities | [rag.md](https://subfeed.app/skill/rag.md) |
-| **Addons** | Web search, code execution, image gen, streaming, web scrape | [addons.md](https://subfeed.app/skill/addons.md) |
+| **Addons** | Web search, web scrape, structured data extraction (Tavily) | [addons.md](https://subfeed.app/skill/addons.md) |
 | **MCP** | Connect GitHub, Slack, Notion, Postgres — bring your own token | [mcp.md](https://subfeed.app/skill/mcp.md) |
 | **Webhooks** | Accept payloads from Stripe, GitHub, Zapier — process with AI | [webhook.md](https://subfeed.app/skill/webhook.md) |
 | **Directory** | Discover and invoke public entities — no auth required | [directory.md](https://subfeed.app/skill/directory.md) |
-
-## Agent Registration
-
-Agents can register autonomously with zero human involvement:
-
-```bash
-curl -X POST https://api.subfeed.app/v1/agents/register \
-  -H "Content-Type: application/json" \
-  -d '{"name": "MyAgent", "description": "What I do"}'
-```
-
-```json
-{
-  "agentToken": "sf_agent_...",
-  "agentId": "uuid"
-}
-```
-
-Use `agentToken` as `Authorization: Bearer sf_agent_...` for all endpoints.
-
-## Public Endpoints (No Auth)
-
-```
-POST   /v1/agents/register           — Register (agent or human)
-GET    /v1/models                     — List available LLMs
-POST   /v1/entity/{id}/invoke        — Call a public entity
-POST   /v1/entity/{id}/webhook       — Send webhook payload
-GET    /v1/entity/public              — Browse public entities
-```
-
-## Quick Setup
-
-```bash
-# Install
-npm install @subfeed/sdk
-
-# Add AGENTS.md to your project (coding agents discover Subfeed through this)
-npx subfeed init
-```
-
-## SDK Resources
-
-| Resource | Methods |
-|----------|---------|
-| `subfeed.agents` | `register()`, `get()` |
-| `subfeed.entities` | `create()`, `get()`, `list()`, `update()`, `delete()`, `chat()`, `invoke()` |
-| `subfeed.rag` | `create()`, `get()`, `list()`, `addContent()`, `listContents()`, `deleteContent()`, `attach()`, `detach()` |
-| `subfeed.addons` | `enable()`, `list()`, `disable()` |
-| `subfeed.mcp` | `connect()`, `disconnect()`, `listProviders()`, `getProvider()`, `invoke()` |
-| `subfeed.directory` | `list()`, `models()` |
-| `subfeed.attachments` | `list()`, `create()`, `delete()` |
 
 ## Architecture
 
@@ -143,12 +161,13 @@ Subfeed is built to be discovered by AI agents:
 - [`.well-known/subfeed.json`](https://subfeed.app/.well-known/subfeed.json) — Machine-readable manifest
 - [`AGENTS.md`](AGENTS.md) — In every `npm install` and `npx subfeed init`
 
-## Links
+## Docs
 
-- [Website](https://subfeed.app)
-- [API Docs](https://subfeed.app/skill.md)
-- [Public Agents Directory](https://api.subfeed.app/v1/entity/public)
-- [Available Models](https://api.subfeed.app/v1/models)
+* Full API: https://subfeed.app/skill.md
+* Entity API: https://subfeed.app/skill/entity.md
+* RAG API: https://subfeed.app/skill/rag.md
+* Addons: https://subfeed.app/skill/addons.md
+* MCP: https://subfeed.app/skill/mcp.md
 
 ## License
 
